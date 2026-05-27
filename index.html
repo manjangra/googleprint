@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GooglePrint.in | Premium Printing & Custom Merchandise Solutions</title>
+  <meta name="description" content="GooglePrint.in - India's premium printing hub for ID Cards, Badges, T-Shirt Printing, Cap Printing, Keyrings, Pens, Diaries, Brochures, Social Media Marketing & Graphic Designing. Based in Uklana Mandi, Hisar, Haryana.">
+  <style>
+    :root {
+      --primary: #ff3d00;
+      --primary-light: #ff6e40;
+      --secondary: #1a1a2e;
+      --accent: #ffd600;
+      --accent2: #00e5ff;
+      --accent3: #d500f9;
+      --dark: #0a0a14;
+      --darker: #050510;
+      --card-bg: #12122a;
+      --card-bg2: #0d0d24;
+      --text: #e0e0e0;
+      --text-light: #b0b0b0;
+      --white: #ffffff;
+      --glass: rgba(255, 255, 255, 0.03);
+      --glass-border: rgba(255, 255, 255, 0.08);
+      --glass-hover: rgba(255, 255, 255, 0.06);
+      --shadow-glow: 0 0 40px rgba(255, 61, 0, 0.3);
+      --shadow-glow-blue: 0 0 40px rgba(0, 229, 255, 0.3);
+      --shadow-glow-purple: 0 0 40px rgba(213, 0, 249, 0.3);
+      --shadow-glow-gold: 0 0 40px rgba(255, 214, 0, 0.3);
+      --radius: 20px;
+      --radius-sm: 12px;
+      --transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1.2);
+      --lanyard-red: #e53935;
+      --lanyard-blue: #1e88e5;
+      --lanyard-green: #43a047;
+      --lanyard-yellow: #fdd835;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body {
+      font-family: 'Segoe UI', 'Poppins', system-ui, -apple-system, sans-serif;
+      background: var(--darker);
+      color: var(--text);
+      overflow-x: hidden;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Lanyard border strips */
+    .lanyard-strip {
+      position: fixed; pointer-events: none; z-index: 0; opacity: 0.15;
+      animation: lanyardWave 8s ease-in-out infinite;
+    }
+    .strip-left {
+      left:0; top:0; width:8px; height:100%;
+      background: repeating-linear-gradient(180deg, var(--lanyard-red) 0px, var(--lanyard-red) 30px, var(--lanyard-blue) 30px, var(--lanyard-blue) 60px, var(--lanyard-green) 60px, var(--lanyard-green) 90px, var(--lanyard-yellow) 90px, var(--lanyard-yellow) 120px);
+      border-radius:0 4px 4px 0; box-shadow:0 0 30px rgba(255,61,0,0.2);
+    }
+    .strip-right {
+      right:0; top:0; width:8px; height:100%;
+      background: repeating-linear-gradient(180deg, var(--lanyard-yellow) 0px, var(--lanyard-yellow) 30px, var(--lanyard-green) 30px, var(--lanyard-green) 60px, var(--lanyard-blue) 60px, var(--lanyard-blue) 90px, var(--lanyard-red) 90px, var(--lanyard-red) 120px);
+      border-radius:4px 0 0 4px; box-shadow:0 0 30px rgba(0,229,255,0.2);
+    }
+    .strip-top {
+      top:0; left:0; width:100%; height:6px;
+      background: repeating-linear-gradient(90deg, var(--lanyard-red) 0px, var(--lanyard-red) 40px, var(--lanyard-blue) 40px, var(--lanyard-blue) 80px, var(--lanyard-yellow) 80px, var(--lanyard-yellow) 120px);
+      border-radius:0 0 3px 3px; box-shadow:0 0 25px rgba(255,214,0,0.2);
+    }
+    .strip-bottom {
+      bottom:0; left:0; width:100%; height:6px;
+      background: repeating-linear-gradient(90deg, var(--lanyard-green) 0px, var(--lanyard-green) 40px, var(--lanyard-red) 40px, var(--lanyard-red) 80px, var(--lanyard-blue) 80px, var(--lanyard-blue) 120px);
+      border-radius:3px 0 0 3px; box-shadow:0 0 25px rgba(67,160,71,0.2);
+    }
+    @keyframes lanyardWave { 0%,100%{opacity:0.12;} 50%{opacity:0.22;} }
+
+    /* Particle canvas */
+    #particleCanvas { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0; opacity:0.45; }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width:6px; } ::-webkit-scrollbar-track { background:var(--darker); } ::-webkit-scrollbar-thumb { background:var(--primary); border-radius:10px; }
+
+    /* Navbar */
+    .navbar {
+      position:fixed; top:12px; left:50%; transform:translateX(-50%); z-index:1000;
+      background:rgba(10,10,25,0.8); backdrop-filter:blur(25px); -webkit-backdrop-filter:blur(25px);
+      border:1px solid var(--glass-border); border-radius:60px; padding:10px 20px;
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      transition:var(--transition); box-shadow:0 10px 40px rgba(0,0,0,0.5);
+      width:92%; max-width:1200px; min-width:700px;
+    }
+    .navbar:hover { box-shadow:0 15px 50px rgba(255,61,0,0.25); border-color:rgba(255,61,0,0.35); }
+    .nav-logo {
+      font-size:1.4rem; font-weight:900;
+      background:linear-gradient(135deg, var(--primary), var(--accent));
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+      letter-spacing:-1px; white-space:nowrap; text-decoration:none; flex-shrink:0;
+    }
+    .nav-links { display:flex; list-style:none; gap:4px; flex-wrap:nowrap; align-items:center; flex-shrink:0; }
+    .nav-links a {
+      color:var(--text-light); text-decoration:none; padding:8px 14px; border-radius:30px;
+      font-size:0.85rem; font-weight:500; transition:var(--transition); white-space:nowrap;
+    }
+    .nav-links a:hover { color:var(--white); background:var(--glass-hover); box-shadow:0 0 20px rgba(255,61,0,0.2); }
+    .nav-cta {
+      background:var(--primary)!important; color:#fff!important; font-weight:700!important;
+      padding:10px 20px!important; animation:pulse-btn 2s infinite; flex-shrink:0; margin-left:4px;
+    }
+    @keyframes pulse-btn { 0%,100%{box-shadow:0 0 0 0 rgba(255,61,0,0.6);} 50%{box-shadow:0 0 0 16px rgba(255,61,0,0);} }
+    .mobile-menu-btn { display:none; background:none; border:none; cursor:pointer; padding:6px; z-index:1001; flex-shrink:0; }
+    .mobile-menu-btn span { display:block; width:26px; height:3px; background:var(--white); margin:5px 0; border-radius:3px; transition:var(--transition); }
+
+    /* Floating characters */
+    .floating-character {
+      position:fixed; pointer-events:none; z-index:1; font-size:2.8rem;
+      animation:charFloat 7s ease-in-out infinite; opacity:0.6;
+      filter:drop-shadow(0 0 15px rgba(255,61,0,0.4));
+    }
+    .char-printer { top:18%; left:4%; animation-delay:0s; font-size:3.2rem; }
+    .char-lanyard { top:60%; right:3%; animation-delay:1.5s; font-size:2.6rem; }
+    .char-idcard { top:75%; left:7%; animation-delay:3s; font-size:2.4rem; }
+    .char-shirt { top:25%; right:6%; animation-delay:4.5s; font-size:3rem; }
+    .char-badge { top:45%; left:3%; animation-delay:2s; font-size:2.5rem; }
+    .char-cap { top:80%; right:8%; animation-delay:5.5s; font-size:2.7rem; }
+    @keyframes charFloat {
+      0%,100%{transform:translateY(0) rotate(0deg);}
+      20%{transform:translateY(-30px) rotate(5deg);}
+      40%{transform:translateY(-15px) rotate(-3deg);}
+      60%{transform:translateY(-35px) rotate(7deg);}
+      80%{transform:translateY(-5px) rotate(-2deg);}
+    }
+
+    /* Hero */
+    .hero {
+      min-height:100vh; display:flex; align-items:center; justify-content:center;
+      position:relative; z-index:2; padding:130px 20px 80px; overflow:hidden;
+    }
+    .hero-bg-orb { position:absolute; border-radius:50%; filter:blur(100px); opacity:0.35; pointer-events:none; animation:floatOrb 8s ease-in-out infinite; }
+    .orb1 { width:500px; height:500px; background:var(--primary); top:-10%; left:-15%; animation-delay:0s; }
+    .orb2 { width:400px; height:400px; background:var(--accent2); bottom:-15%; right:-10%; animation-delay:3s; }
+    .orb3 { width:350px; height:350px; background:var(--accent3); top:40%; left:50%; animation-delay:5s; opacity:0.2; }
+    @keyframes floatOrb { 0%,100%{transform:translate(0,0) scale(1);} 25%{transform:translate(50px,-40px) scale(1.1);} 50%{transform:translate(-30px,30px) scale(0.9);} 75%{transform:translate(-50px,-20px) scale(1.05);} }
+    .hero-content { text-align:center; position:relative; z-index:3; max-width:900px; }
+    .hero-badge { display:inline-block; background:var(--glass); border:1px solid var(--glass-border); padding:8px 20px; border-radius:50px; font-size:0.85rem; letter-spacing:2px; text-transform:uppercase; color:var(--accent); margin-bottom:20px; animation:fadeInUp 1s ease; }
+    .hero h1 { font-size:clamp(2.5rem,6vw,4.5rem); font-weight:900; line-height:1.1; margin-bottom:10px; animation:fadeInUp 1s ease 0.2s both; }
+    .hero h1 .gradient-text { background:linear-gradient(135deg, var(--primary-light), var(--accent), var(--primary)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; animation:gradientShift 4s ease infinite; background-size:200% 200%; }
+    @keyframes gradientShift { 0%,100%{background-position:0% 50%;} 50%{background-position:100% 50%;} }
+    .hero h1 .white-text { color:var(--white); }
+    .hero-subtitle { font-size:1.2rem; color:var(--text-light); margin-bottom:30px; animation:fadeInUp 1s ease 0.4s both; max-width:600px; margin-left:auto; margin-right:auto; }
+    .hero-buttons { display:flex; gap:16px; flex-wrap:wrap; justify-content:center; animation:fadeInUp 1s ease 0.6s both; }
+    .btn { display:inline-flex; align-items:center; gap:8px; padding:14px 32px; border-radius:50px; font-weight:700; font-size:1rem; text-decoration:none; cursor:pointer; border:none; transition:var(--transition); position:relative; overflow:hidden; z-index:1; }
+    .btn-primary { background:linear-gradient(135deg, var(--primary), #ff6d00); color:#fff; box-shadow:var(--shadow-glow); }
+    .btn-primary:hover { transform:translateY(-3px); box-shadow:0 0 60px rgba(255,61,0,0.5); }
+    .btn-outline { background:transparent; color:var(--white); border:2px solid rgba(255,255,255,0.3); }
+    .btn-outline:hover { border-color:var(--accent2); box-shadow:var(--shadow-glow-blue); transform:translateY(-3px); }
+    @keyframes fadeInUp { from{opacity:0; transform:translateY(40px);} to{opacity:1; transform:translateY(0);} }
+    .hero-3d-cards { display:flex; gap:20px; justify-content:center; flex-wrap:wrap; margin-top:50px; animation:fadeInUp 1s ease 0.8s both; }
+    .float-card { width:100px; height:130px; background:var(--glass); border:1px solid var(--glass-border); border-radius:var(--radius-sm); display:flex; align-items:center; justify-content:center; font-size:2.5rem; animation:float3D 6s ease-in-out infinite; cursor:pointer; transition:var(--transition); position:relative; backdrop-filter:blur(10px); }
+    .float-card:nth-child(1){animation-delay:0s;} .float-card:nth-child(2){animation-delay:0.5s;} .float-card:nth-child(3){animation-delay:1s;} .float-card:nth-child(4){animation-delay:1.5s;} .float-card:nth-child(5){animation-delay:2s;} .float-card:nth-child(6){animation-delay:2.5s;}
+    .float-card:hover { transform:translateY(-20px) rotateY(15deg) rotateX(10deg) scale(1.1); box-shadow:var(--shadow-glow); border-color:var(--primary); }
+    @keyframes float3D { 0%,100%{transform:translateY(0) rotateY(0deg) rotateX(0deg);} 25%{transform:translateY(-25px) rotateY(8deg) rotateX(5deg);} 50%{transform:translateY(-10px) rotateY(-5deg) rotateX(-3deg);} 75%{transform:translateY(-30px) rotateY(3deg) rotateX(7deg);} }
+    .float-card-label { position:absolute; bottom:-30px; font-size:0.7rem; color:var(--text-light); text-align:center; white-space:nowrap; }
+
+    /* Sections */
+    .section { padding:80px 20px; position:relative; z-index:2; }
+    .section-header { text-align:center; margin-bottom:60px; }
+    .section-tag { display:inline-block; background:var(--glass); border:1px solid var(--glass-border); padding:6px 18px; border-radius:50px; font-size:0.8rem; letter-spacing:2px; text-transform:uppercase; color:var(--accent2); margin-bottom:15px; }
+    .section-title { font-size:clamp(1.8rem,4vw,2.8rem); font-weight:900; color:var(--white); margin-bottom:10px; }
+    .section-title .highlight { background:linear-gradient(135deg, var(--primary), var(--accent)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+    .section-desc { color:var(--text-light); max-width:650px; margin:0 auto; font-size:1rem; }
+    .container { max-width:1300px; margin:0 auto; }
+
+    /* Services */
+    .services-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(340px, 1fr)); gap:28px; }
+    .service-card { background:var(--card-bg); border:1px solid var(--glass-border); border-radius:var(--radius); padding:35px 28px; transition:var(--transition); position:relative; overflow:hidden; cursor:pointer; }
+    .service-card::before { content:''; position:absolute; top:-50%; left:-50%; width:200%; height:200%; background:radial-gradient(circle, rgba(255,61,0,0.08) 0%, transparent 70%); opacity:0; transition:opacity 0.5s; pointer-events:none; }
+    .service-card:hover::before { opacity:1; }
+    .service-card:hover { transform:translateY(-12px); border-color:var(--primary); box-shadow:var(--shadow-glow); background:var(--card-bg2); }
+    .service-icon-wrap { width:65px; height:65px; border-radius:18px; display:flex; align-items:center; justify-content:center; font-size:2rem; margin-bottom:20px; background:var(--glass); border:1px solid var(--glass-border); transition:var(--transition); position:relative; z-index:2; }
+    .service-card:hover .service-icon-wrap { background:rgba(255,61,0,0.15); border-color:var(--primary); box-shadow:0 0 30px rgba(255,61,0,0.3); transform:rotate(-5deg) scale(1.1); }
+    .service-card h3 { font-size:1.35rem; font-weight:700; color:var(--white); margin-bottom:8px; position:relative; z-index:2; }
+    .service-card .service-price { display:inline-block; background:var(--primary); color:#fff; padding:3px 12px; border-radius:20px; font-size:0.8rem; font-weight:600; margin-bottom:10px; position:relative; z-index:2; }
+    .service-card p { color:var(--text-light); font-size:0.9rem; position:relative; z-index:2; line-height:1.6; word-wrap:break-word; }
+    .service-features { list-style:none; margin-top:12px; position:relative; z-index:2; }
+    .service-features li { color:var(--text-light); font-size:0.82rem; padding:3px 0; padding-left:20px; position:relative; }
+    .service-features li::before { content:'✓'; position:absolute; left:0; color:var(--accent2); font-weight:bold; }
+    .service-card .card-glow-line { position:absolute; bottom:0; left:20px; right:20px; height:2px; background:linear-gradient(90deg, transparent, var(--primary), transparent); opacity:0; transition:opacity 0.5s; }
+    .service-card:hover .card-glow-line { opacity:1; }
+    .lanyard-tag { position:absolute; top:15px; right:-5px; width:50px; height:16px; background:var(--lanyard-red); border-radius:3px; z-index:3; transform:rotate(8deg); box-shadow:0 2px 8px rgba(0,0,0,0.4); }
+    .lanyard-tag::before { content:''; position:absolute; top:-6px; right:8px; width:8px; height:8px; background:#b0bec5; border-radius:50%; border:2px solid #78909c; }
+    .tag-blue { background:var(--lanyard-blue); right:10px; top:20px; transform:rotate(-5deg); width:40px; }
+    .tag-green { background:var(--lanyard-green); right:-2px; top:25px; transform:rotate(12deg); width:45px; }
+    .tag-yellow { background:var(--lanyard-yellow); right:5px; top:12px; transform:rotate(-8deg); width:38px; }
+
+    /* Category tabs */
+    .category-tabs { display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin-bottom:40px; }
+    .cat-tab { padding:10px 22px; border-radius:50px; border:1px solid var(--glass-border); background:var(--glass); color:var(--text-light); cursor:pointer; font-weight:600; font-size:0.9rem; transition:var(--transition); white-space:nowrap; }
+    .cat-tab:hover, .cat-tab.active { background:var(--primary); color:#fff; border-color:var(--primary); box-shadow:var(--shadow-glow); }
+
+    /* ========== NEW TESTIMONIAL FADE STACK ========== */
+    .testimonial-stack {
+      display: grid;
+      grid-template-areas: "stack";
+      max-width: 750px;
+      margin: 0 auto;
+      position: relative;
+    }
+    .testimonial-fade-item {
+      grid-area: stack;
+      opacity: 0;
+      transition: opacity 0.7s ease;
+      pointer-events: none;
+      background: var(--card-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius);
+      padding: 35px 30px;
+      text-align: center;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+    .testimonial-fade-item.active {
+      opacity: 1;
+      pointer-events: auto;
+      z-index: 2;
+    }
+    .quote-icon { font-size:3rem; opacity:0.3; position:absolute; top:15px; left:25px; }
+    .testimonial-stars { color:var(--accent); font-size:1.3rem; letter-spacing:3px; margin-bottom:12px; }
+    .testimonial-fade-item p {
+      font-style:italic; color:var(--text-light); font-size:1rem; margin-bottom:20px;
+      line-height:1.7; position:relative; z-index:1; word-wrap:break-word;
+    }
+    .testimonial-author { display:flex; align-items:center; gap:14px; justify-content:center; }
+    .testimonial-avatar {
+      width:52px; height:52px; border-radius:50%;
+      background:linear-gradient(135deg, var(--primary), var(--accent));
+      display:flex; align-items:center; justify-content:center;
+      font-weight:700; color:#fff; font-size:1.3rem; flex-shrink:0;
+    }
+    .testimonial-author strong { color:var(--white); display:block; font-size:0.95rem; }
+    .testimonial-author span { color:var(--text-light); font-size:0.78rem; }
+
+    .carousel-dots { display:flex; gap:10px; justify-content:center; margin-top:25px; }
+    .carousel-dot { width:12px; height:12px; border-radius:50%; background:var(--glass-border); cursor:pointer; transition:var(--transition); border:2px solid transparent; }
+    .carousel-dot.active { background:var(--primary); border-color:var(--accent); box-shadow:0 0 20px rgba(255,61,0,0.5); transform:scale(1.3); }
+    .carousel-arrow {
+      position:absolute; top:50%; transform:translateY(-50%); background:var(--glass);
+      border:1px solid var(--glass-border); color:var(--white); width:44px; height:44px;
+      border-radius:50%; cursor:pointer; font-size:1.3rem; z-index:5; transition:var(--transition);
+      display:flex; align-items:center; justify-content:center; backdrop-filter:blur(10px);
+    }
+    .carousel-arrow:hover { background:var(--primary); border-color:var(--primary); box-shadow:var(--shadow-glow); }
+    .carousel-arrow.prev { left:-10px; } .carousel-arrow.next { right:-10px; }
+
+    /* Contact */
+    .contact-wrapper { display:grid; grid-template-columns:1fr 1fr; gap:40px; align-items:start; }
+    .contact-info-card { background:var(--card-bg); border:1px solid var(--glass-border); border-radius:var(--radius); padding:35px; position:relative; }
+    .contact-info-card h3 { font-size:1.5rem; color:var(--white); margin-bottom:20px; }
+    .contact-item { display:flex; align-items:center; gap:14px; margin-bottom:18px; color:var(--text-light); font-size:0.95rem; }
+    .contact-item .ci-icon { width:48px; height:48px; border-radius:14px; background:var(--glass); border:1px solid var(--glass-border); display:flex; align-items:center; justify-content:center; font-size:1.3rem; flex-shrink:0; transition:var(--transition); }
+    .contact-item:hover .ci-icon { background:rgba(255,61,0,0.15); border-color:var(--primary); box-shadow:0 0 20px rgba(255,61,0,0.3); }
+    .contact-item a { color:var(--accent2); text-decoration:none; font-weight:600; }
+    .contact-map-placeholder { background:var(--card-bg); border:1px solid var(--glass-border); border-radius:var(--radius); padding:35px; text-align:center; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:350px; }
+    .map-icon { font-size:5rem; margin-bottom:15px; animation:bounce 2s infinite; }
+    @keyframes bounce { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-20px);} }
+    .contact-lanyard-hang { position:absolute; top:-30px; left:50%; transform:translateX(-50%); width:6px; height:40px; background:repeating-linear-gradient(180deg, var(--lanyard-red), var(--lanyard-blue) 10px, var(--lanyard-green) 20px, var(--lanyard-yellow) 30px); border-radius:3px; z-index:3; }
+    .contact-lanyard-hang::after { content:''; position:absolute; bottom:-8px; left:50%; transform:translateX(-50%); width:16px; height:12px; background:#78909c; border-radius:3px; box-shadow:0 2px 6px rgba(0,0,0,0.5); }
+
+    .footer { background:var(--dark); border-top:1px solid var(--glass-border); padding:40px 20px; text-align:center; position:relative; z-index:2; }
+    .footer-links { display:flex; gap:20px; flex-wrap:wrap; justify-content:center; margin-bottom:20px; }
+    .footer-links a { color:var(--text-light); text-decoration:none; font-size:0.9rem; transition:var(--transition); }
+    .footer-links a:hover { color:var(--primary-light); }
+    .footer p { color:var(--text-light); font-size:0.8rem; }
+
+    .reveal { opacity:0; transform:translateY(50px); transition:all 0.8s cubic-bezier(0.25,0.8,0.25,1); }
+    .reveal.active { opacity:1; transform:translateY(0); }
+
+    @media (max-width:900px) {
+      .navbar { min-width:auto; width:96%; padding:8px 14px; border-radius:40px; gap:6px; }
+      .nav-logo { font-size:1.1rem; }
+      .nav-links { display:none; position:absolute; top:65px; left:10px; right:10px; background:rgba(10,10,25,0.97); backdrop-filter:blur(25px); border-radius:20px; flex-direction:column; padding:18px; border:1px solid var(--glass-border); gap:2px; }
+      .nav-links.show { display:flex; }
+      .nav-links a { padding:10px 16px; font-size:0.9rem; width:100%; text-align:center; }
+      .nav-cta { margin-left:0; width:100%; text-align:center; }
+      .mobile-menu-btn { display:block; }
+      .contact-wrapper { grid-template-columns:1fr; }
+      .services-grid { grid-template-columns:1fr; }
+      .carousel-arrow.prev { left:2px; } .carousel-arrow.next { right:2px; }
+      .floating-character { font-size:1.6rem!important; opacity:0.35; }
+    }
+  </style>
+</head>
+<body>
+  <div class="lanyard-strip strip-left"></div>
+  <div class="lanyard-strip strip-right"></div>
+  <div class="lanyard-strip strip-top"></div>
+  <div class="lanyard-strip strip-bottom"></div>
+
+  <div class="floating-character char-printer">🖨️</div>
+  <div class="floating-character char-lanyard">📿</div>
+  <div class="floating-character char-idcard">🪪</div>
+  <div class="floating-character char-shirt">👕</div>
+  <div class="floating-character char-badge">🏅</div>
+  <div class="floating-character char-cap">🧢</div>
+
+  <canvas id="particleCanvas"></canvas>
+
+  <nav class="navbar" id="navbar">
+    <a href="#" class="nav-logo">GooglePrint<span style="color:#ff3d00;">.in</span></a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#home">🏠 Home</a></li>
+      <li><a href="#services">🖨️ Services</a></li>
+      <li><a href="#testimonials">⭐ Reviews</a></li>
+      <li><a href="#contact">📞 Contact</a></li>
+      <li><a href="#contact" class="nav-cta">⚡ Get Quote</a></li>
+    </ul>
+    <button class="mobile-menu-btn" id="mobileMenuBtn"><span></span><span></span><span></span></button>
+  </nav>
+
+  <section class="hero" id="home">
+    <div class="hero-bg-orb orb1"></div><div class="hero-bg-orb orb2"></div><div class="hero-bg-orb orb3"></div>
+    <div class="hero-content">
+      <div class="hero-badge">🚀 India's Creative Printing Hub</div>
+      <h1><span class="white-text">Your Imagination,</span><br><span class="gradient-text">Our Precision Printing</span></h1>
+      <p class="hero-subtitle">From stunning ID Cards & Badges to custom T-Shirts, Caps, Keyrings, Brochures & complete Digital Marketing — <strong>GooglePrint.in</strong> delivers premium quality with lightning-fast turnaround across India.</p>
+      <div class="hero-buttons">
+        <a href="#services" class="btn btn-primary">🔍 Explore All Services</a>
+        <a href="#contact" class="btn btn-outline">📞 Contact Us Now</a>
+      </div>
+      <div class="hero-3d-cards">
+        <div class="float-card">🪪<span class="float-card-label">ID Cards</span></div>
+        <div class="float-card">👕<span class="float-card-label">T-Shirts</span></div>
+        <div class="float-card">🏅<span class="float-card-label">Badges</span></div>
+        <div class="float-card">🔑<span class="float-card-label">Keyrings</span></div>
+        <div class="float-card">📖<span class="float-card-label">Brochures</span></div>
+        <div class="float-card">📱<span class="float-card-label">Marketing</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="services">
+    <div class="container">
+      <div class="section-header reveal"><span class="section-tag">📦 What We Offer</span><h2 class="section-title">Our <span class="highlight">Premium Services</span></h2><p class="section-desc">Explore our comprehensive range of printing, customization, and digital marketing services — all crafted with cutting-edge technology and premium materials.</p></div>
+      <div class="category-tabs reveal" id="categoryTabs">
+        <button class="cat-tab active" data-cat="all">🔍 All Services</button>
+        <button class="cat-tab" data-cat="cat-print">🖨️ Print Essentials</button>
+        <button class="cat-tab" data-cat="cat-merch">👕 Custom Merchandise</button>
+        <button class="cat-tab" data-cat="cat-novelty">🎁 Novelty & Gifts</button>
+        <button class="cat-tab" data-cat="cat-digital">💻 Digital Services</button>
+      </div>
+      <div class="services-grid" id="servicesGrid">
+        <!-- service cards same as before, with lanyard tags etc. -->
+        <div class="service-card cat-print reveal" data-cat="cat-print"><div class="lanyard-tag"></div><div class="service-icon-wrap">🪪</div><h3>School & College ID Cards</h3><span class="service-price">Bulk Orders Welcome</span><p>Premium PVC & smart chip-enabled ID cards for schools, colleges, and corporates. High-resolution photo printing with barcode, QR code, and magnetic stripe options.</p><ul class="service-features"><li>HD Photo Quality PVC Cards</li><li>QR Code / Barcode Integration</li><li>Smart Chip & RFID Options</li><li>Custom Lanyard & Holder Combos</li><li>Bulk Discounts for Institutions</li><li>Fast 3-5 Day Turnaround</li></ul><div class="card-glow-line"></div></div>
+        <div class="service-card cat-print reveal" data-cat="cat-print"><div class="lanyard-tag tag-blue"></div><div class="service-icon-wrap">🏅</div><h3>Custom Badges & Pins</h3><span class="service-price">Starting ₹49/piece</span><p>Elegant metal, enamel, and acrylic badges for events, conferences, schools, and corporate branding. Custom shapes, colors, and finishes available.</p><ul class="service-features"><li>Metal & Enamel Badges</li><li>Acrylic & Plastic Options</li><li>Custom Shape Die-Cutting</li><li>Pin, Magnet & Clip Backings</li><li>Event & Conference Badges</li><li>Premium Finish & Packaging</li></ul><div class="card-glow-line"></div></div>
+        <div class="service-card cat-novelty reveal" data-cat="cat-novelty"><div class="lanyard-tag tag-green"></div><div class="service-icon-wrap">🔑</div><h3>Printed Keyrings</h3><span class="service-price">Bulk Rates Available</span><p>Custom-printed keyrings in acrylic, metal, leather, and rubber. Perfect for corporate gifting, college souvenirs, and promotional giveaways.</p><ul class="service-features"><li>Acrylic Crystal Clear Keyrings</li><li>Metal Engraved Keyrings</li><li>Leather Strap Keyrings</li><li>3D Embossed Designs</li><li>LED Light-Up Keyrings</li><li>Personalized Name Keyrings</li></ul><div class="card-glow-line"></div></div>
+        <div class="service-card cat-novelty reveal" data-cat="cat-novelty"><div class="lanyard-tag tag-yellow"></div><div class="service-icon-wrap">🖊️</div><h3>Printed Pens & Diaries</h3><span class="service-price">Corporate Branding Specialists</span><p>High-quality branded pens, premium diaries, and notebooks with your logo or design. Ideal for corporate gifting, events, and promotional campaigns.</p><ul class="service-features"><li>Ball, Gel & Roller Pens</li><li>Metal & Plastic Body Options</li><li>Custom Printed Diaries (A5/A4)</li><li>Leather Bound Notebooks</li><li>Logo Embossing & Foil Stamping</li><li>Gift Set Combos Available</li></ul><div class="card-glow-line"></div></div>
+        <div class="service-card cat-novelty reveal" data-cat="cat-novelty"><div class="lanyard-tag"></div><div class="service-icon-wrap">🗿</div><h3>3D Models & Novelty Items</h3><span class="service-price">Custom 3D Printing Available</span><p>Custom 3D-printed models, figurines, trophies, and unique novelty items. From architectural models to personalized gifts — we bring your ideas to life.</p><ul class="service-features"><li>3D Printed Figurines & Models</li><li>Custom Trophies & Awards</li><li>Architectural Scale Models</li><li>Resin & Plastic Materials</li><li>Full-Color 3D Printing</li><li>Prototype Development</li></ul><div class="card-glow-line"></div></div>
+        <div class="service-card cat-merch reveal" data-cat="cat-merch"><div class="lanyard-tag tag-blue"></div><div class="service-icon-wrap">👕</div><h3>T-Shirt Printing</h3><span class="service-price">Premium Quality Guaranteed</span><p>Vibrant, long-lasting T-shirt printing using DTG, screen printing, sublimation, and heat transfer. Perfect for college fests, corporate events, sports teams.</p><ul class="service-features"><li>DTG (Direct to Garment) Printing</li><li>Screen Printing for Bulk Orders</li><li>Sublimation All-Over Prints</li><li>Cotton, Polyester & Blends</li><li>Custom Design Assistance</li><li>All Sizes: XS to 5XL</li></ul><div class="card-glow-line"></div></div>
+        <div class="service-card cat-merch reveal" data-cat="cat-merch"><div class="lanyard-tag tag-green"></div><div class="service-icon-wrap">🧢</div><h3>Cap & Hat Printing</h3><span class="service-price">Embroidery & Print Options</span><p>Custom caps with embroidery, screen printing, or puff printing. Snapbacks, dad hats, beanies, and sports caps — all customizable with your logo or artwork.</p><ul class="service-features"><li>Embroidery (Flat & 3D Puff)</li><li>Screen Printed Caps</li><li>Snapbacks & Fitted Caps</li><li>Beanies & Winter Caps</li><li>Sports & Trucker Caps</li><li>Custom Patches Available</li></ul><div class="card-glow-line"></div></div>
+        <div class="service-card cat-print reveal" data-cat="cat-print"><div class="lanyard-tag tag-yellow"></div><div class="service-icon-wrap">📖</div><h3>Pamphlets & Brochures</h3><span class="service-price">High-Gloss Premium Printing</span><p>Eye-catching pamphlets, flyers, and brochures printed on premium paper with stunning finishes. Bi-fold, tri-fold, and multi-page booklet options.</p><ul class="service-features"><li>Glossy & Matte Finish Options</li><li>Bi-Fold & Tri-Fold Brochures</li><li>Multi-Page Booklets</li><li>170 GSM Premium Paper</li><li>Spot UV & Foil Stamping</li><li>Design + Print Combo Deals</li></ul><div class="card-glow-line"></div></div>
+        <div class="service-card cat-digital reveal" data-cat="cat-digital"><div class="lanyard-tag"></div><div class="service-icon-wrap">📱</div><h3>Social Media Marketing</h3><span class="service-price">Grow Your Brand Online</span><p>Complete social media management including content creation, ad campaigns, and brand strategy for Instagram, Facebook, LinkedIn, and YouTube.</p><ul class="service-features"><li>Instagram & Facebook Ads</li><li>Content Calendar & Posting</li><li>Reels & Video Content Creation</li><li>Brand Strategy Development</li><li>Analytics & Performance Reports</li><li>Influencer Collaboration Setup</li></ul><div class="card-glow-line"></div></div>
+        <div class="service-card cat-digital reveal" data-cat="cat-digital"><div class="lanyard-tag tag-blue"></div><div class="service-icon-wrap">🎨</div><h3>Graphic Designing</h3><span class="service-price">Creative Excellence</span><p>Professional graphic design services for logos, branding, packaging, social media posts, banners, and more. Our designers create visuals that captivate.</p><ul class="service-features"><li>Logo & Brand Identity Design</li><li>Packaging & Label Design</li><li>Social Media Creatives</li><li>Banner & Hoarding Designs</li><li>Product Mockups & 3D Renders</li><li>Unlimited Revisions Policy</li></ul><div class="card-glow-line"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS WITH FADE STACK -->
+  <section class="section" id="testimonials" style="background:rgba(0,0,0,0.2);">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-tag">💬 Client Love</span>
+        <h2 class="section-title">What Our <span class="highlight">Clients Say</span></h2>
+        <p class="section-desc">Over 500+ happy clients across India trust GooglePrint.in for their printing and branding needs.</p>
+      </div>
+      <div style="position:relative; max-width:800px; margin:0 auto;">
+        <button class="carousel-arrow prev" id="prevBtn">◀</button>
+        <div class="testimonial-stack reveal" id="testimonialStack">
+          <div class="testimonial-fade-item active">
+            <div class="quote-icon">❝</div>
+            <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+            <p>"Ordered 500 ID cards for our college fest. The quality was outstanding and the QR code feature worked flawlessly. Delivered in just 4 days! Highly recommended."</p>
+            <div class="testimonial-author"><div class="testimonial-avatar">AK</div><div><strong>Amit Kumar</strong><span>College Fest Coordinator, Delhi University</span></div></div>
+          </div>
+          <div class="testimonial-fade-item">
+            <div class="quote-icon">❝</div>
+            <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+            <p>"Got custom T-shirts printed for our startup team. The DTG print quality is phenomenal — colors are vibrant even after 20+ washes. GooglePrint.in is our go-to now!"</p>
+            <div class="testimonial-author"><div class="testimonial-avatar">PS</div><div><strong>Priya Sharma</strong><span>Startup Founder, Gurugram</span></div></div>
+          </div>
+          <div class="testimonial-fade-item">
+            <div class="quote-icon">❝</div>
+            <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+            <p>"The brochure design and printing for our real estate project was top-notch. Premium glossy finish and spot UV made all the difference. Clients loved it!"</p>
+            <div class="testimonial-author"><div class="testimonial-avatar">RS</div><div><strong>Rajesh Singh</strong><span>Real Estate Developer, Hisar</span></div></div>
+          </div>
+          <div class="testimonial-fade-item">
+            <div class="quote-icon">❝</div>
+            <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+            <p>"Their social media marketing service transformed our online presence. Instagram followers doubled in 2 months and inquiries increased by 3x. Amazing team!"</p>
+            <div class="testimonial-author"><div class="testimonial-avatar">NK</div><div><strong>Neha Kapoor</strong><span>Boutique Owner, Chandigarh</span></div></div>
+          </div>
+          <div class="testimonial-fade-item">
+            <div class="quote-icon">❝</div>
+            <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+            <p>"Ordered custom keyrings and badges as return gifts for my wedding. Everyone loved them! The personalization was perfect and packaging was beautiful."</p>
+            <div class="testimonial-author"><div class="testimonial-avatar">MD</div><div><strong>Megha Desai</strong><span>Customer, Mumbai</span></div></div>
+          </div>
+          <div class="testimonial-fade-item">
+            <div class="quote-icon">❝</div>
+            <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+            <p>"Best printing service in Haryana! Got pamphlets and banners done for our political campaign. Sharp prints, fast delivery, and unbeatable prices. 10/10!"</p>
+            <div class="testimonial-author"><div class="testimonial-avatar">VS</div><div><strong>Vikram Saini</strong><span>Local Business Owner, Uklana Mandi</span></div></div>
+          </div>
+        </div>
+        <button class="carousel-arrow next" id="nextBtn">▶</button>
+      </div>
+      <div class="carousel-dots" id="carouselDots"></div>
+    </div>
+  </section>
+
+  <section class="section" id="contact">
+    <div class="container">
+      <div class="section-header reveal"><span class="section-tag">📞 Get In Touch</span><h2 class="section-title">Let's <span class="highlight">Create Together</span></h2><p class="section-desc">Ready to start your project? Reach out to us — we'd love to discuss your ideas and bring them to life!</p></div>
+      <div class="contact-wrapper">
+        <div class="contact-info-card reveal" style="position:relative;">
+          <div class="contact-lanyard-hang"></div>
+          <h3>📍 Contact Information</h3>
+          <div class="contact-item"><div class="ci-icon">📞</div><div><strong style="color:#fff;display:block;">Call / WhatsApp</strong><a href="tel:+919996669691">+91 999 666 9691</a></div></div>
+          <div class="contact-item"><div class="ci-icon">📧</div><div><strong style="color:#fff;display:block;">Instagram</strong><a href="https://instagram.com/bigiview" target="_blank">@bigiview</a></div></div>
+          <div class="contact-item"><div class="ci-icon">📍</div><div><strong style="color:#fff;display:block;">Visit Our Studio</strong><span>Uklana Mandi, Hisar, Haryana - 125113</span></div></div>
+          <div class="contact-item"><div class="ci-icon">🌐</div><div><strong style="color:#fff;display:block;">Website</strong><span>www.GooglePrint.in</span></div></div>
+          <div class="contact-item"><div class="ci-icon">⏰</div><div><strong style="color:#fff;display:block;">Business Hours</strong><span>Mon - Sat: 9:00 AM - 8:00 PM<br>Sunday: By Appointment</span></div></div>
+        </div>
+        <div class="contact-map-placeholder reveal">
+          <div class="map-icon">🗺️</div>
+          <h4>📍 Uklana Mandi, Hisar, Haryana</h4>
+          <p>Serving clients across India with pride.<br>Local pickup & nationwide shipping available.</p>
+          <a href="tel:+919996669691" class="btn btn-primary" style="margin-top:10px;">📞 Call Now: +91 999 666 9691</a>
+          <a href="https://instagram.com/bigiview" target="_blank" class="btn btn-outline" style="margin-top:10px;">📸 Follow @bigiview</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-links"><a href="#home">Home</a><a href="#services">Services</a><a href="#testimonials">Reviews</a><a href="#contact">Contact</a><a href="https://instagram.com/bigiview">Instagram</a></div>
+      <p>© 2026 <strong>GooglePrint.in</strong> — All Rights Reserved. | Premium Printing & Custom Merchandise | Uklana Mandi, Hisar, Haryana</p>
+      <p style="margin-top:5px;">Made with ❤️ for India | Trusted by 500+ Happy Clients</p>
+    </div>
+  </footer>
+
+  <script>
+    (function() {
+      // Mobile menu
+      const mobileBtn = document.getElementById('mobileMenuBtn');
+      const navLinks = document.getElementById('navLinks');
+      mobileBtn.addEventListener('click', ()=> navLinks.classList.toggle('show'));
+      navLinks.querySelectorAll('a').forEach(link => link.addEventListener('click', ()=> navLinks.classList.remove('show')));
+
+      // Category filter
+      const tabs = document.querySelectorAll('.cat-tab');
+      const cards = document.querySelectorAll('.service-card');
+      tabs.forEach(tab => {
+        tab.addEventListener('click', ()=>{
+          tabs.forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+          const cat = tab.dataset.cat;
+          cards.forEach((card, i) => {
+            if(cat === 'all' || card.dataset.cat === cat) {
+              card.style.display = 'block';
+              card.style.animation = 'fadeInUp 0.5s ease forwards';
+              card.style.animationDelay = (i*0.05)+'s';
+            } else {
+              card.style.display = 'none';
+            }
+          });
+        });
+      });
+
+      // Scroll reveal
+      const revealEls = document.querySelectorAll('.reveal');
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => { if(entry.isIntersecting) { entry.target.classList.add('active'); observer.unobserve(entry.target); } });
+      }, { threshold: 0.15 });
+      revealEls.forEach(el => observer.observe(el));
+
+      // Testimonial fade stack
+      const stack = document.getElementById('testimonialStack');
+      const items = document.querySelectorAll('.testimonial-fade-item');
+      const dotsContainer = document.getElementById('carouselDots');
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+      let current = 0;
+      const total = items.length;
+      let interval;
+
+      for(let i=0; i<total; i++) {
+        const dot = document.createElement('span');
+        dot.classList.add('carousel-dot');
+        if(i===0) dot.classList.add('active');
+        dot.addEventListener('click', ()=> goTo(i));
+        dotsContainer.appendChild(dot);
+      }
+      const dots = document.querySelectorAll('.carousel-dot');
+
+      function update() {
+        items.forEach((item, i) => {
+          item.classList.toggle('active', i === current);
+        });
+        dots.forEach((dot, i) => dot.classList.toggle('active', i === current));
+      }
+
+      function goTo(index) {
+        current = index;
+        update();
+        resetInterval();
+      }
+
+      function next() {
+        current = (current + 1) % total;
+        update();
+        resetInterval();
+      }
+
+      function prev() {
+        current = (current - 1 + total) % total;
+        update();
+        resetInterval();
+      }
+
+      function resetInterval() {
+        clearInterval(interval);
+        interval = setInterval(next, 4500);
+      }
+
+      prevBtn.addEventListener('click', prev);
+      nextBtn.addEventListener('click', next);
+      // Touch swipe
+      let touchStartX = 0;
+      stack.addEventListener('touchstart', e => touchStartX = e.touches[0].clientX);
+      stack.addEventListener('touchend', e => {
+        let diff = touchStartX - e.changedTouches[0].clientX;
+        if(Math.abs(diff) > 50) diff > 0 ? next() : prev();
+      });
+
+      interval = setInterval(next, 4500);
+
+      // Particle canvas
+      const canvas = document.getElementById('particleCanvas');
+      const ctx = canvas.getContext('2d');
+      let particles = [];
+      function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+      resizeCanvas();
+      window.addEventListener('resize', ()=> { resizeCanvas(); initParticles(); });
+      class Particle {
+        constructor() { this.reset(); }
+        reset() {
+          this.x = Math.random()*canvas.width; this.y = Math.random()*canvas.height;
+          this.size = Math.random()*2+0.5; this.speedX = (Math.random()-0.5)*0.6; this.speedY = (Math.random()-0.5)*0.6;
+          this.opacity = Math.random()*0.5+0.2;
+          this.color = ['#ff3d00','#ff6e40','#ffd600','#00e5ff','#d500f9','#ffffff'][Math.floor(Math.random()*6)];
+        }
+        update() {
+          this.x += this.speedX; this.y += this.speedY;
+          if(this.x<-20 || this.x>canvas.width+20 || this.y<-20 || this.y>canvas.height+20) this.reset();
+        }
+        draw() {
+          ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI*2);
+          ctx.fillStyle = this.color; ctx.globalAlpha = this.opacity; ctx.fill(); ctx.globalAlpha = 1;
+        }
+      }
+      function initParticles() {
+        const count = Math.min(Math.floor((canvas.width*canvas.height)/12000), 150);
+        particles = [];
+        for(let i=0; i<count; i++) particles.push(new Particle());
+      }
+      initParticles();
+      function animateParticles() {
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        for(let i=0; i<particles.length; i++) {
+          for(let j=i+1; j<particles.length; j++) {
+            const dx = particles[i].x - particles[j].x, dy = particles[i].y - particles[j].y;
+            const dist = Math.sqrt(dx*dx+dy*dy);
+            if(dist < 120) {
+              ctx.beginPath(); ctx.moveTo(particles[i].x, particles[i].y); ctx.lineTo(particles[j].x, particles[j].y);
+              ctx.strokeStyle = particles[i].color; ctx.globalAlpha = (1-dist/120)*0.15; ctx.lineWidth=0.5; ctx.stroke();
+              ctx.globalAlpha=1;
+            }
+          }
+        }
+        particles.forEach(p => { p.update(); p.draw(); });
+        requestAnimationFrame(animateParticles);
+      }
+      animateParticles();
+
+      // Navbar scroll effect
+      window.addEventListener('scroll', ()=>{
+        const nav = document.getElementById('navbar');
+        if(window.scrollY > 50) {
+          nav.style.boxShadow = '0 10px 40px rgba(255,61,0,0.25)'; nav.style.background = 'rgba(10,10,25,0.9)';
+        } else {
+          nav.style.boxShadow = '0 10px 40px rgba(0,0,0,0.5)'; nav.style.background = 'rgba(10,10,25,0.8)';
+        }
+      });
+
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+          const target = document.querySelector(this.getAttribute('href'));
+          if(target) { e.preventDefault(); target.scrollIntoView({behavior:'smooth'}); }
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
